@@ -12,7 +12,7 @@ pipeline {
             steps {
                 git branch: 'main',
                     credentialsId: 'github_credentials',
-                    url: 'TON_GITHUB_URL'
+                    url: 'https://github.com/fitiafenohajaun/triangle-app.git'
             }
         }
 
@@ -22,7 +22,7 @@ pipeline {
             }
         }
 
-        stage('Unit Test') {
+        stage('Unit Tests') {
             steps {
                 sh 'mvn test'
             }
@@ -41,4 +41,13 @@ pipeline {
         }
     }
 
+    post {
+        success {
+            echo 'Build SUCCESS'
+        }
+
+        failure {
+            echo 'Build FAILED'
+        }
+    }
 }
