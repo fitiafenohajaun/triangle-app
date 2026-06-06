@@ -6,6 +6,10 @@ pipeline {
         maven 'Maven3'
     }
 
+    environment {
+        IMAGE_NAME = 'fitiafenohajaun/triangle-app:1.0'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -36,7 +40,28 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t triangle-app:1.0 .'
+                sh 'docker build -t $IMAGE_NAME .'
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'dockerhubpass',
+                           variable: 'DOCKER_TOKEN')
+                ]) {
+                    sh '''
+                        echo "$DOCKER_TOKEN" | docker login \
+                        -u fitiafenohajaun \
+                        --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh 'docker push $IMAGE_NAME'
             }
         }
     }
